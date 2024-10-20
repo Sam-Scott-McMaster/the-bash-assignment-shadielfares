@@ -1,40 +1,90 @@
 #!/bin/bash
 
-# Function to run a test case
-test() {
-    input_year="$1"
-    input_gender="$2"
-    input_names="$3"
-    expected_output="$4"
+missing_arguments() {
 
-    # Run the main script and capture the output
-    output=$(echo "$input_names" | ./bn "$input_year" "$input_gender" 2>&1)
+	output=$(./bn "$1" 2>&1)
+	
+	expected_output="bn <year> <assigned gender f|F|m|M|b|B>"
 
+	# Check if the output matches the expected output
+	if [[ "$output" == "$expected_output" ]]
+       	then
+		echo "Passed for input: $1"
+	else
+		echo "Failed for input: $1"
+		echo "Expected: $expected_output"
+		echo "Got: $output"
+	fi
+}
+
+help_test(){
+
+        output=$(./bn "$1" 2>&1)
+
+	expected_output=$(printf "Title: BN \nVersion: 0.0.1 \n \nBrief Overview: This app takes in put year and letter (representing sex of baby name). \n \nUsage: To use correctly please enter the info like the following: \n\n./bn year f|F|m|M|b|B \n\nf|F - returns any year of a child within for female names.\n\nb|B - returns any year of a child within for boy names.\n\nyear - will index based on the file corresponding to that year.")
+
+        # Check if the output matches the expected output
+        if [[ "$output" == "$expected_output" ]]
+        then
+                echo "Passed for input: $1"
+        else
+                echo "Failed for input: $1"
+                echo "Expected: $expected_output"
+                echo "Got: $output"
+        fi
+}
+
+incorrect_gender(){
+
+        output=$(./bn "$1" "$2" 2>&1)
+
+	expected_output=$(printf "Badly formatted assigned gender: $2\nbn <year> <assigned gender f|F|m|M|b|B>")
+
+        # Check if the output matches the expected output
+        if [[ "$output" == "$expected_output" ]]
+        then
+                echo "Passed for input: $1, $2"
+        else
+                echo "Failed for input: $1, $2"
+                echo "Expected: $expected_output"
+                echo "Got: $output"
+        fi
+}
+
+ranking_test() {
+    year=$1
+    gender=$2
+    name=$3
+    expected_output=$4
+
+    # Run the bn script and send the name as input, capturing the output
+    output=$( {
+        echo "$name"
+        echo ""  # Sending an empty line to signal the end of input
+    } | ./bn "$year" "$gender" 2>&1 )
+	
     # Check if the output matches the expected output
-    if [[ "$output" == *"$expected_output"* ]]
-    then
-        echo "Test Passed: $input_names (Year: $input_year, Gender: $input_gender)"
+    if [[ "$output" == "$expected_output" ]]; then
+        echo "Test with year $year, gender $gender, name '$name': Passed"
     else
-        echo "Test Failed: $input_names (Year: $input_year, Gender: $input_gender)"
-        echo -e "Expected: $expected_output"
+        echo "Test with year $year, gender $gender, name '$name': Failed"
+        echo "Expected: $expected_output"
         echo "Got: $output"
     fi
 }
 
-# Setup test cases
-test 1969 M "sam" "1969: sam ranked 318 out of 5042 male names." 
-test 1969 F "lucy" "1969: lucy ranked 391 out of 8708 female names."
-test 1969 b "SCOTT" "1969: sam ranked 318 out of 5042 male names.\n1969: sam ranked 5861 out of 8708 female names."
+# Directly call run_test with just year and gender
+missing_arguments 1969 
+help_test --help
+incorrect_gender 1969 X
 
-# Test for an invalid name
-test 2000 M "lucy2" "Badly formatted name: lucy2"
+# Test cases with expected output
+ranking_test 1969 "M" "sam" "1969: sam ranked 318 out of 5042 male names." 
+ranking_test 1969 "M" "lucy" "1969: lucy not found among male names."
+ranking_test 1969 "F" "jane" "1969: jane ranked 170 out of 8708 female names."
+ranking_test 2020 "b" "jade" "$(printf "2020: jade ranked 2420 out of 14032 male names.\n2020: jade ranked 97 out of 17485 female names.")"
 
-# Test for a non-existing name
-test 1969 M "NonExistingName" "1969: NonExistingName not found among male names."
+ranking_test 1969 "b" "sam SCOTT Bob" "$(printf "1969: sam ranked 318 out of 5042 male names.\n1969: sam ranked 5861 out of 8708 female names.\n1969: SCOTT ranked 12 out of 5042 male names.\n1969: SCOTT ranked 983 out of 8708 female names.\n1969: Bob ranked 380 out of 5042 male names.\n1969: Bob not found among female names.")"
 
-# Test for an invalid gender input
-test 1969 X "Sam" "Badly formatted assigned gender: X\nbn <year> <assigned gender f|F|m|M|b|B>"
-
-# Test for a year that does not exist
-test 2000 M "Sam" "No data for year 2000"
-
+ranking_test 2020 "f" "SARA" "2020: SARA ranked 183 out of 17485 female names."
+ranking_test 2020 "f" "sara2" "Badly formatted name: sara2"
