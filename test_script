@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Function to run a test case
+test() {
+    input_year="$1"
+    input_gender="$2"
+    input_names="$3"
+    expected_output="$4"
+
+    # Run the main script and capture the output
+    output=$(echo "$input_names" | ./bn "$input_year" "$input_gender" 2>&1)
+
+    # Check if the output matches the expected output
+    if [[ "$output" == *"$expected_output"* ]]
+    then
+        echo "Test Passed: $input_names (Year: $input_year, Gender: $input_gender)"
+    else
+        echo "Test Failed: $input_names (Year: $input_year, Gender: $input_gender)"
+        echo -e "Expected: $expected_output"
+        echo "Got: $output"
+    fi
+}
+
+# Setup test cases
+test 1969 M "sam" "1969: sam ranked 318 out of 5042 male names." 
+test 1969 F "lucy" "1969: lucy ranked 391 out of 8708 female names."
+test 1969 b "SCOTT" "1969: sam ranked 318 out of 5042 male names.\n1969: sam ranked 5861 out of 8708 female names."
+
+# Test for an invalid name
+test 2000 M "lucy2" "Badly formatted name: lucy2"
+
+# Test for a non-existing name
+test 1969 M "NonExistingName" "1969: NonExistingName not found among male names."
+
+# Test for an invalid gender input
+test 1969 X "Sam" "Badly formatted assigned gender: X\nbn <year> <assigned gender f|F|m|M|b|B>"
+
+# Test for a year that does not exist
+test 2000 M "Sam" "No data for year 2000"
+
