@@ -1,0 +1,10 @@
+Passed for input: 1969
+Passed for input: --help
+Passed for input: 1969, X
+Test with year 1969, gender M, name 'sam': Passed
+Test with year 1969, gender M, name 'lucy': Passed
+Test with year 1969, gender F, name 'jane': Passed
+Test with year 2020, gender b, name 'jade': Passed
+Test with year 1969, gender b, name 'sam SCOTT Bob': Passed
+Test with year 2020, gender f, name 'SARA': Passed
+Test with year 2020, gender f, name 'sara2': Passed

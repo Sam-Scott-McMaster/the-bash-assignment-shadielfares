@@ -5,108 +5,108 @@
 
 # Defining functions up here before main function logic
 help() {
-    echo -e "Title: BN \nVersion: 0.0.1 \n \nBrief Overview: This app takes in put year and letter (representing sex of baby name). \n \nUsage: To use correctly please enter the info like the following: \n\n./bn year f|F|m|M|b|B \n\nf|F - returns any year of a child within for female names.\n\nb|B - returns any year of a child within for boy names.\n\nyear - will index based on the file corresponding to that year." >&1
+	echo -e "Title: BN \nVersion: 0.0.1 \n \nBrief Overview: This app takes in put year and letter (representing sex of baby name). \n \nUsage: To use correctly please enter the info like the following: \n\n./bn year f|F|m|M|b|B \n\nf|F - returns any year of a child within for female names.\n\nb|B - returns any year of a child within for boy names.\n\nyear - will index based on the file corresponding to that year." >&1
 }
 
 rank() {
-    # List the contents of us_baby_names directory
-    # Basically ls us_baby_names
-    found_file=false
-    for file in $(ls us_baby_names)
-    do
-        filename=$(basename "$file")
+	# List the contents of us_baby_names directory
+	# Basically ls us_baby_names
+	found_file=false
+	for file in $(ls us_baby_names)
+	do
+		filename=$(basename "$file")
 
-        if [[ $filename =~ yob${1}\.txt ]]
-        then
-            found_file=true
-            
-            total_male_names=$(grep -P ".,M,." "us_baby_names/$file")
-            total_female_names=$(grep -P ".,F,." "us_baby_names/$file")
-            total_male_names_Num=$(echo "$total_male_names" | wc -l)
-            total_female_names_Num=$(echo "$total_female_names" | wc -l)
-            
-            while true
-            do
-                # Read for names first
-                read -r names
-                # If names are empty {ADDED TO MAKE TESTING DOABLE), break the loop
-                if [[ -z $names ]]; then
-                    break
-                fi
-                for name in $names
-                do
-                    if [[ ! $name =~ ^[a-zA-Z]{2,15}$ ]]
-                    then
-                        echo "Badly formatted name: $name" >&2
-                        exit 3;
-                    fi
+		if [[ $filename =~ yob${1}\.txt ]]
+		then
+			found_file=true
 
-                    # Search within male or female names based on the initial gender
-                    if [[ $2 =~ ^[mM]$ ]]
-                    then
-                        rank=$(echo "$total_male_names" | grep -i -n "^$name," | cut -d: -f1)
-                        if [ -n "$rank" ]
-                        then
-                            echo "$1: $name ranked $rank out of $total_male_names_Num male names."
-                        else
-                            echo "$1: $name not found among male names."
-                        fi
-                    elif [[ $2 =~ ^[fF]$ ]]
-                    then
-                        rank=$(echo "$total_female_names" | grep -i -n "^$name," | cut -d: -f1)
-                        if [ -n "$rank" ]
-                        then
-                            echo "$1: $name ranked $rank out of $total_female_names_Num female names."
-                        else
-                            echo "$1: $name not found among female names."
-                        fi
-                    elif [[ $2 =~ ^[bB]$ ]]
-                    then
-                        rank_male=$(echo "$total_male_names" | grep -i -n "^$name," | cut -d: -f1)
-                        rank_female=$(echo "$total_female_names" | grep -i -n "^$name," | cut -d: -f1)
+			total_male_names=$(grep -P ".,M,." "us_baby_names/$file")
+			total_female_names=$(grep -P ".,F,." "us_baby_names/$file")
+			total_male_names_Num=$(echo "$total_male_names" | wc -l)
+			total_female_names_Num=$(echo "$total_female_names" | wc -l)
 
-                        if [ -n "$rank_male" ]
-                        then
-                            echo "$1: $name ranked $rank_male out of $total_male_names_Num male names."
-                        else
-                            echo "$1: $name not found among male names."
-                        fi
-                        if [ -n "$rank_female" ]
-                        then
-                            echo "$1: $name ranked $rank_female out of $total_female_names_Num female names."
-                        else
-                            echo "$1: $name not found among female names."
-                        fi
-                    fi
-                done
-            done
-        fi
+			while true
+			do
+				# Read for names first
+				read -r names
+				# If names are empty {ADDED TO MAKE TESTING DOABLE), break the loop
+				if [[ -z $names ]]; then
+					break
+				fi
+				for name in $names
+				do
+					if [[ ! $name =~ ^[a-zA-Z]{2,15}$ ]]
+					then
+						echo "Badly formatted name: $name" >&2
+						exit 3;
+					fi
+
+		    # Search within male or female names based on the initial gender
+		    if [[ $2 =~ ^[mM]$ ]]
+		    then
+			    rank=$(echo "$total_male_names" | grep -i -n "^$name," | cut -d: -f1)
+			    if [ -n "$rank" ]
+			    then
+				    echo "$1: $name ranked $rank out of $total_male_names_Num male names."
+			    else
+				    echo "$1: $name not found among male names."
+			    fi
+		    elif [[ $2 =~ ^[fF]$ ]]
+		    then
+			    rank=$(echo "$total_female_names" | grep -i -n "^$name," | cut -d: -f1)
+			    if [ -n "$rank" ]
+			    then
+				    echo "$1: $name ranked $rank out of $total_female_names_Num female names."
+			    else
+				    echo "$1: $name not found among female names."
+			    fi
+		    elif [[ $2 =~ ^[bB]$ ]]
+		    then
+			    rank_male=$(echo "$total_male_names" | grep -i -n "^$name," | cut -d: -f1)
+			    rank_female=$(echo "$total_female_names" | grep -i -n "^$name," | cut -d: -f1)
+
+			    if [ -n "$rank_male" ]
+			    then
+				    echo "$1: $name ranked $rank_male out of $total_male_names_Num male names."
+			    else
+				    echo "$1: $name not found among male names."
+			    fi
+			    if [ -n "$rank_female" ]
+			    then
+				    echo "$1: $name ranked $rank_female out of $total_female_names_Num female names."
+			    else
+				    echo "$1: $name not found among female names."
+			    fi
+		    fi
+	    done
     done
-    if ! $found_file
-    then    
-        echo "No data for $1" >&2
-        exit 4
-    fi
+		fi
+	done
+	if ! $found_file
+	then    
+		echo "No data for $1" >&2
+		exit 4
+	fi
 }
 
 main() {
-    if [[ $1 == "--help" ]];
-    then
-        help
-    elif [[ $# != 2 ]];
-    then
-        echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2
-        exit 1;
+	if [[ $1 == "--help" ]];
+	then
+		help
+	elif [[ $# != 2 ]];
+	then
+		echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2
+		exit 1;
 
-    elif [[ $1 =~ ^[0-9]{4}$ ]] && [[ ! $2 =~ ^[fFmMbB]$ ]];
-    then
-        echo "Badly formatted assigned gender: $2" >&2
-        echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2
-        exit 2;
-    else
-        # Call rank function
-        rank "$@"
-    fi
+	elif [[ $1 =~ ^[0-9]{4}$ ]] && [[ ! $2 =~ ^[fFmMbB]$ ]];
+	then
+		echo "Badly formatted assigned gender: $2" >&2
+		echo "bn <year> <assigned gender f|F|m|M|b|B>" >&2
+		exit 2;
+	else
+		# Call rank function
+		rank "$@"
+	fi
 }
 main "$@"
 

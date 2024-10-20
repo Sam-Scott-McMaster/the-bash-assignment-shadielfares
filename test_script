@@ -3,12 +3,12 @@
 missing_arguments() {
 
 	output=$(./bn "$1" 2>&1)
-	
+
 	expected_output="bn <year> <assigned gender f|F|m|M|b|B>"
 
 	# Check if the output matches the expected output
 	if [[ "$output" == "$expected_output" ]]
-       	then
+	then
 		echo "Passed for input: $1"
 	else
 		echo "Failed for input: $1"
@@ -19,57 +19,57 @@ missing_arguments() {
 
 help_test(){
 
-        output=$(./bn "$1" 2>&1)
+	output=$(./bn "$1" 2>&1)
 
 	expected_output=$(printf "Title: BN \nVersion: 0.0.1 \n \nBrief Overview: This app takes in put year and letter (representing sex of baby name). \n \nUsage: To use correctly please enter the info like the following: \n\n./bn year f|F|m|M|b|B \n\nf|F - returns any year of a child within for female names.\n\nb|B - returns any year of a child within for boy names.\n\nyear - will index based on the file corresponding to that year.")
 
-        # Check if the output matches the expected output
-        if [[ "$output" == "$expected_output" ]]
-        then
-                echo "Passed for input: $1"
-        else
-                echo "Failed for input: $1"
-                echo "Expected: $expected_output"
-                echo "Got: $output"
-        fi
+	# Check if the output matches the expected output
+	if [[ "$output" == "$expected_output" ]]
+	then
+		echo "Passed for input: $1"
+	else
+		echo "Failed for input: $1"
+		echo "Expected: $expected_output"
+		echo "Got: $output"
+	fi
 }
 
 incorrect_gender(){
 
-        output=$(./bn "$1" "$2" 2>&1)
+	output=$(./bn "$1" "$2" 2>&1)
 
 	expected_output=$(printf "Badly formatted assigned gender: $2\nbn <year> <assigned gender f|F|m|M|b|B>")
 
-        # Check if the output matches the expected output
-        if [[ "$output" == "$expected_output" ]]
-        then
-                echo "Passed for input: $1, $2"
-        else
-                echo "Failed for input: $1, $2"
-                echo "Expected: $expected_output"
-                echo "Got: $output"
-        fi
+	# Check if the output matches the expected output
+	if [[ "$output" == "$expected_output" ]]
+	then
+		echo "Passed for input: $1, $2"
+	else
+		echo "Failed for input: $1, $2"
+		echo "Expected: $expected_output"
+		echo "Got: $output"
+	fi
 }
 
 ranking_test() {
-    year=$1
-    gender=$2
-    name=$3
-    expected_output=$4
+	year=$1
+	gender=$2
+	name=$3
+	expected_output=$4
 
     # Run the bn script and send the name as input, capturing the output
     output=$( {
-        echo "$name"
-        echo ""  # Sending an empty line to signal the end of input
-    } | ./bn "$year" "$gender" 2>&1 )
-	
+    echo "$name"
+    echo ""  # Sending an empty line to signal the end of input
+} | ./bn "$year" "$gender" 2>&1 )
+
     # Check if the output matches the expected output
     if [[ "$output" == "$expected_output" ]]; then
-        echo "Test with year $year, gender $gender, name '$name': Passed"
+	    echo "Test with year $year, gender $gender, name '$name': Passed"
     else
-        echo "Test with year $year, gender $gender, name '$name': Failed"
-        echo "Expected: $expected_output"
-        echo "Got: $output"
+	    echo "Test with year $year, gender $gender, name '$name': Failed"
+	    echo "Expected: $expected_output"
+	    echo "Got: $output"
     fi
 }
 
